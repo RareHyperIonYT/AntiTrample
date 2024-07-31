@@ -1,0 +1,15 @@
+name: AntiTrample
+version: '1.0'
+author: "RareHyperIon"
+description: "Prevent your crops from being trampled by players."
+main: me.RareHyperIon.AntiTrample.Main
+permissions:
+  antitrample.ignored:
+    description: "Allows the player to bypass anti-trample protection."
+    default: op
+  antitrample.reload:
+    description: "Allows the user to reload anti-trample."
+    default: op
+commands:
+  antitrample:
+    description: "Reload anti-trample."
