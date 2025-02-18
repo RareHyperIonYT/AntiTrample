@@ -1,10 +1,9 @@
 package me.RareHyperIon.AntiTrample;
 
-import com.cryptomorin.xseries.XBlock;
+import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +23,13 @@ import java.util.List;
 
 public final class Main extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
 
+    private Material parsedFarmland;
+
+    @Override
+    public void onLoad() {
+        this.parsedFarmland = XMaterial.FARMLAND.parseMaterial();
+    }
+
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
@@ -34,14 +40,19 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent event) {
-        if(event.getAction() != Action.PHYSICAL || event.getClickedBlock().getType() != Material.SOIL) return;
+        if(event.getAction() != Action.PHYSICAL || event.getClickedBlock().getType() != this.parsedFarmland) return;
         final FileConfiguration config = this.getConfig();
 
-        if(config.getBoolean("CheckPermissions") && event.getPlayer().hasPermission("antitrample.ignored")) return;
+        final String mode = config.getString("PermissionMode").toUpperCase();
+        final Player player = event.getPlayer();
+
+        if("BYPASS".equals(mode) && player.hasPermission("antitrample.ignored") ||
+            "WHITELIST".equals(mode) && !player.hasPermission("antitrample.use")) {
+            return;
+        }
 
         final String message = config.getString("Message");
         final String sound = config.getString("Sound");
-        final Player player = event.getPlayer();
 
         if(message != null && !message.trim().isEmpty()) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
@@ -57,7 +68,7 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityInteract(final EntityInteractEvent event) {
         if(!this.getConfig().getBoolean("PreventMobs")) return;
-        if(event.getBlock() == null || event.getBlock().getType() != Material.SOIL) return;
+        if(event.getBlock() == null || event.getBlock().getType() != this.parsedFarmland) return;
         event.setCancelled(true);
     }
 
@@ -85,4 +96,5 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
         return Collections.singletonList("reload");
     }
+
 }

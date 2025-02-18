@@ -1,11 +1,15 @@
 name: AntiTrample
-version: '1.0'
+version: '1.1'
 author: "RareHyperIon"
 description: "Prevent your crops from being trampled by players."
 main: me.RareHyperIon.AntiTrample.Main
+api-version: 1.13
 permissions:
   antitrample.ignored:
     description: "Allows the player to bypass anti-trample protection."
+    default: op
+  antitrample.use:
+    description: "Prevents players with this permission to use anti-trample protection."
     default: op
   antitrample.reload:
     description: "Allows the user to reload anti-trample."

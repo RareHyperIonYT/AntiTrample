@@ -6,7 +6,7 @@
 
     <groupId>me.RareHyperIon</groupId>
     <artifactId>AntiTrample</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
 
     <name>AntiTrample</name>
@@ -31,19 +31,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
                     <relocations>
@@ -63,7 +50,6 @@
                                 <exclude>com/cryptomorin/xseries/XEntity*</exclude>
                                 <exclude>com/cryptomorin/xseries/XEntityType*</exclude>
                                 <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
-                                <exclude>com/cryptomorin/xseries/XMaterial*</exclude>
                                 <exclude>com/cryptomorin/xseries/XPotion*</exclude>
                                 <exclude>com/cryptomorin/xseries/XTag*</exclude>
                                 <exclude>com/cryptomorin/xseries/XWorldBorder*</exclude>

@@ -1,6 +1,7 @@
-# Enable or disable permission checks for trampling crops.
-# Set to true to ignore players that have permission and allow them to trample.
-CheckPermissions: true
+# Change the permission checking mode for trampling crops.
+# "BYPASS": Anti-trample prevention applies to all players unless they have the bypass permission.
+# "WHITELIST": Anti-trample prevention only applies to players with the use permission.
+PermissionMode: "BYPASS"
 
 # Enable or disable prevention of mobs trampling crops.
 # Set to false if you want to allow mobs to trample crops as usual.
