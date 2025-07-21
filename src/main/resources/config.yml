@@ -7,7 +7,7 @@ PermissionMode: "BYPASS"
 # Set to false if you want to allow mobs to trample crops as usual.
 PreventMobs: true
 
-# Message to display wen a player attempts to trample crops.
+# Message to display when a player attempts to trample crops.
 # Leave this field empty to disable message notifications.
 Message: "&cYou do not have permission to trample on crops."
 
