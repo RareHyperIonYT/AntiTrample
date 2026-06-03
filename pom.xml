@@ -36,29 +36,17 @@
                     <relocations>
                         <relocation>
                             <pattern>com.cryptomorin.xseries</pattern>
-                            <shadedPattern>me.RareHyperIon.AntiTrample.utility</shadedPattern>
+                            <shadedPattern>me.RareHyperIon.AntiTrample.xseries</shadedPattern>
                         </relocation>
                     </relocations>
                     <filters>
                         <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>com/cryptomorin/xseries/NoteBlockMusic*</exclude>
-                                <exclude>com/cryptomorin/xseries/XBiome*</exclude>
-                                <exclude>com/cryptomorin/xseries/XBlock*</exclude>
-                                <exclude>com/cryptomorin/xseries/XEnchantment*</exclude>
-                                <exclude>com/cryptomorin/xseries/XEntity*</exclude>
-                                <exclude>com/cryptomorin/xseries/XEntityType*</exclude>
-                                <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
-                                <exclude>com/cryptomorin/xseries/XPotion*</exclude>
-                                <exclude>com/cryptomorin/xseries/XTag*</exclude>
-                                <exclude>com/cryptomorin/xseries/XWorldBorder*</exclude>
-                                <exclude>com/cryptomorin/xseries/abstractions/**</exclude>
-                                <exclude>com/cryptomorin/xseries/messages/**</exclude>
-                                <exclude>com/cryptomorin/xseries/particles/**</exclude>
-                                <exclude>com/cryptomorin/xseries/profiles/**</exclude>
-                                <exclude>com/cryptomorin/xseries/reflection/**</exclude>
-                            </excludes>
+                            <artifact>com.github.cryptomorin:XSeries</artifact>
+                            <includes>
+                                <include>com/cryptomorin/xseries/XSound*</include>
+                                <include>com/cryptomorin/xseries/XMaterial*</include>
+                                <include>com/cryptomorin/xseries/base/**</include>
+                            </includes>
                         </filter>
                     </filters>
                 </configuration>
