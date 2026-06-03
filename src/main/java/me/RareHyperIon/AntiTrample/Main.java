@@ -18,8 +18,7 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public final class Main extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
 
@@ -27,23 +26,31 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
 
     @Override
     public void onLoad() {
-        this.parsedFarmland = XMaterial.FARMLAND.parseMaterial();
+        this.parsedFarmland = XMaterial.FARMLAND.get();
     }
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
         this.getServer().getPluginManager().registerEvents(this, this);
-        this.getCommand("antitrample").setExecutor(this);
-        this.getCommand("antitrample").setTabCompleter(this);
+        Objects.requireNonNull(this.getCommand("antitrample")).setExecutor(this);
+        Objects.requireNonNull(this.getCommand("antitrample")).setTabCompleter(this);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent event) {
-        if(event.getAction() != Action.PHYSICAL || event.getClickedBlock().getType() != this.parsedFarmland) return;
+        if(event.getAction() != Action.PHYSICAL)
+            return;
+
+        if(event.getClickedBlock() == null)
+            return;
+
+        if(event.getClickedBlock().getType() != this.parsedFarmland)
+            return;
+
         final FileConfiguration config = this.getConfig();
 
-        final String mode = config.getString("PermissionMode").toUpperCase();
+        final String mode = Objects.requireNonNull(config.getString("PermissionMode", "BYPASS")).toUpperCase(Locale.ROOT);
         final Player player = event.getPlayer();
 
         if("BYPASS".equals(mode) && player.hasPermission("antitrample.ignored") ||
@@ -52,14 +59,33 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
         }
 
         final String message = config.getString("Message");
-        final String sound = config.getString("Sound");
 
         if(message != null && !message.trim().isEmpty()) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         }
 
-        if(sound != null && !sound.trim().isEmpty()) {
-            player.playSound(player.getLocation(), XSound.valueOf(sound).parseSound(), 1, 1);
+        final boolean soundEnabled = config.getBoolean("Sound.Enabled", true);
+
+        if(soundEnabled) {
+            final String soundName = config.getString("Sound.Type", "BLOCK_NOTE_BLOCK_BASS");
+
+            if(soundName != null && !soundName.trim().isEmpty()) {
+                final Optional<XSound> optional = XSound.of(soundName);
+
+                if(optional.isPresent()) {
+                    final XSound sound = optional.get();
+
+                    final float volume = (float) config.getDouble("Sound.Volume", 1.0D);
+                    final float pitch  = (float) config.getDouble("Sound.Pitch",  1.0D);
+
+                    sound.play(player.getLocation(), volume, pitch);
+                } else {
+                    this.getServer().getLogger().warning("Invalid sound '" + soundName + "'.");
+                }
+            }
+
+            // Silently ignoring if a sound wasn't actually provided.
+            // May or may not be a better idea to add a warning, but I'm not sure so I'll leave it like this.
         }
 
         event.setCancelled(true);
@@ -67,8 +93,9 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityInteract(final EntityInteractEvent event) {
-        if(!this.getConfig().getBoolean("PreventMobs")) return;
-        if(event.getBlock() == null || event.getBlock().getType() != this.parsedFarmland) return;
+        if(!this.getConfig().getBoolean("PreventMobs", true)) return;
+        if(event.getBlock().getType() != this.parsedFarmland) return;
+
         event.setCancelled(true);
     }
 
