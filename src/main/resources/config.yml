@@ -18,6 +18,6 @@ Sound:
   # Use a sound identifier like "BLOCK_NOTE_BLOCK_BASS" for a note sound.
   Type: "BLOCK_NOTE_BLOCK_BASS"
   # Use a value between 0 - 2 to adjust the volume. 0.5 = 50%. 2 = 200%.
-  Volume: 1
+  Volume: 1.0
   # Use a value between 0 - 2 to adjust the pitch.
-  Pitch: 1
+  Pitch: 1.0

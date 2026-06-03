@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,56 +40,48 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(final PlayerInteractEvent event) {
-        if(event.getAction() != Action.PHYSICAL)
-            return;
+        if(event.getAction() != Action.PHYSICAL) return;
 
-        if(event.getClickedBlock() == null)
-            return;
+        final Block clickedBlock = event.getClickedBlock();
+        if(clickedBlock == null) return;
 
-        if(event.getClickedBlock().getType() != this.parsedFarmland)
-            return;
-
-        final FileConfiguration config = this.getConfig();
-
-        final String mode = Objects.requireNonNull(config.getString("PermissionMode", "BYPASS")).toUpperCase(Locale.ROOT);
-        final Player player = event.getPlayer();
-
-        if("BYPASS".equals(mode) && player.hasPermission("antitrample.ignored") ||
-            "WHITELIST".equals(mode) && !player.hasPermission("antitrample.use")) {
+        if(clickedBlock.getType() != this.parsedFarmland) {
             return;
         }
 
+        final Player player = event.getPlayer();
+        if(this.shouldIgnore(player)) return;
+
+        event.setCancelled(true);
+
+        final FileConfiguration config = this.getConfig();
         final String message = config.getString("Message");
 
         if(message != null && !message.trim().isEmpty()) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         }
 
-        final boolean soundEnabled = config.getBoolean("Sound.Enabled", true);
-
-        if(soundEnabled) {
-            final String soundName = config.getString("Sound.Type", "BLOCK_NOTE_BLOCK_BASS");
-
-            if(soundName != null && !soundName.trim().isEmpty()) {
-                final Optional<XSound> optional = XSound.of(soundName);
-
-                if(optional.isPresent()) {
-                    final XSound sound = optional.get();
-
-                    final float volume = (float) config.getDouble("Sound.Volume", 1.0D);
-                    final float pitch  = (float) config.getDouble("Sound.Pitch",  1.0D);
-
-                    sound.play(player.getLocation(), volume, pitch);
-                } else {
-                    this.getServer().getLogger().warning("Invalid sound '" + soundName + "'.");
-                }
-            }
-
-            // Silently ignoring if a sound wasn't actually provided.
-            // May or may not be a better idea to add a warning, but I'm not sure so I'll leave it like this.
+        if(!config.getBoolean("Sound.Enabled", true)) {
+            return;
         }
 
-        event.setCancelled(true);
+        final String soundName = config.getString("Sound.Type", "BLOCK_NOTE_BLOCK_BASS");
+
+        if(soundName != null && !soundName.trim().isEmpty()) {
+            final Optional<XSound> sound = XSound.of(soundName);
+
+            if(sound.isPresent()) {
+                final float volume = (float) config.getDouble("Sound.Volume", 1.0D);
+                final float pitch  = (float) config.getDouble("Sound.Pitch",  1.0D);
+
+                sound.get().play(player.getLocation(), volume, pitch);
+            } else {
+                this.getServer().getLogger().warning("Invalid sound '" + soundName + "'.");
+            }
+        }
+
+        // Silently ignoring if a sound wasn't actually provided.
+        // May or may not be a better idea to add a warning, but I'm not sure so I'll leave it like this.
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -122,6 +115,15 @@ public final class Main extends JavaPlugin implements Listener, CommandExecutor,
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
         return Collections.singletonList("reload");
+    }
+
+    private boolean shouldIgnore(final Player player) {
+        final String mode = Objects.requireNonNull(
+                this.getConfig().getString("PermissionMode", "BYPASS")
+        ).toUpperCase(Locale.ROOT);
+
+        return ("BYPASS".equals(mode) && player.hasPermission("antitrample.ignored")) ||
+                ("WHITELIST".equals(mode) && !player.hasPermission("antitrample.use"));
     }
 
 }
