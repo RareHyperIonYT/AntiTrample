@@ -26,14 +26,20 @@ Protects your crops from being trampled by both players and mobs.
   # Set to false if you want to allow mobs to trample crops as usual.
   PreventMobs: true
     
-  # Message to display wen a player attempts to trample crops.
+  # Message to display when a player attempts to trample crops.
   # Leave this field empty to disable message notifications.
   Message: "&cYou do not have permission to trample on crops."
     
   # Sound to play when a player attempts to trample on crops.
-  # Use a sound identifier like "BLOCK_NOTE_BLOCK_BASS" for a note sound.
-  # Leave this field empty to disable sound notifications
-  Sound: "BLOCK_NOTE_BLOCK_BASS"
+  Sound:
+    # Set to false if you want to disable sound notifications.
+    Enabled: true
+    # Use a sound identifier like "BLOCK_NOTE_BLOCK_BASS" for a note sound.
+    Type: "BLOCK_NOTE_BLOCK_BASS"
+    # Use a value between 0 - 2 to adjust the volume. 0.5 = 50%. 2 = 200%.
+    Volume: 1.0
+    # Use a value between 0 - 2 to adjust the pitch.
+    Pitch: 1.0
   ```
 
 </details>
